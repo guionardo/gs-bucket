@@ -2,7 +2,7 @@
 
 [![github](https://img.shields.io/badge/github-gs--bucket-blue)](https://github.com/guionardo/gs-bucket)
 ![go-version](https://img.shields.io/github/go-mod/go-version/guionardo/gs-bucket)
-[![Go](https://github.com/guionardo/gs-bucket/actions/workflows/go.yml/badge.svg)](https://github.com/guionardo/gs-bucket/actions/workflows/go.yml)
+[![SonarCloud analysis](https://github.com/guionardo/gs-bucket/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/guionardo/gs-bucket/actions/workflows/sonarcloud.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=guionardo_gs-bucket&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=guionardo_gs-bucket)
 
 [![deploy](https://img.shields.io/badge/Deploy-fly.io-orange)](https://gs-bucket.fly.dev/)
