@@ -12,6 +12,7 @@ RUN go mod download
 COPY gs-bucket.go .
 COPY cmd ./cmd/
 COPY pkg ./pkg/
+COPY README.md .
 
 RUN GOOS=linux go build -o gs-bucket .
 #RUN CGO_ENABLED=1 GOOS=linux go build -o gs-bucket  -ldflags="-X 'main.Build=$(date +%Y-%m-%dT%H:%M:%S%z)'" cmd/gs-bucket.go
