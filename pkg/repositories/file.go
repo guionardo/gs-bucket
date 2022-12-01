@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -20,12 +21,28 @@ type (
 		MimeType   string    `json:"mime_type"`
 		Content    []byte    `json:"-"`
 		Size       int       `json:"size"`
+		URL        string    `json:"url"`
 	}
 )
 
 const (
 	FILE_AGE_BASE = 16 // HEXADECIMAL
 )
+
+var (
+	lock     sync.RWMutex
+	lastHost string
+)
+
+func SetLastHost(host string) {
+	lock.Lock()
+	defer lock.Unlock()
+	lastHost = host
+}
+
+func IsHostOk() bool {
+	return lastHost != ""
+}
 
 func CreateFile(name string, body []byte, mimeType string, ttl time.Duration) *File {
 	file := NewFile(name, ttl, mimeType)
@@ -62,6 +79,7 @@ func ReadFile(filename string) (*File, error) {
 		return nil, err
 	}
 	file.Content, err = os.ReadFile(filename)
+	file.URL = fmt.Sprintf("%s/%s", lastHost, file.Code)
 	return file, err
 }
 

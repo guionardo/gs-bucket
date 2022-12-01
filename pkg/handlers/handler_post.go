@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path"
@@ -39,6 +40,8 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		Message:      "File uploaded successfully",
 		FileName:     file.Name,
 		HashFileName: file.Code,
+		ValidUntil:   file.ValidUntil,
+		URL:          fmt.Sprintf("//%s", file.Code),
 	})
 	return
 }

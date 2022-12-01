@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/TelephoneTan/GoHTTPGzipServer/gzip"
@@ -18,8 +19,21 @@ var (
 	_logger     = logger.GetLogger("handlers")
 )
 
+func setupHost(r *http.Request) {
+	if repositories.IsHostOk() {
+		return
+	}
+	if strings.Contains(r.Host, "localhost") {
+		repositories.SetLastHost(fmt.Sprintf("http://%s", r.Host))
+	} else {
+		repositories.SetLastHost(fmt.Sprintf("https://%s", r.Host))
+	}
+
+}
 func MainHandler(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
+
+	setupHost(r)
 	defer func() {
 		// _logger.Printf("%v", w)
 		_logger.Printf("%s %-6s %s %s\n", r.RemoteAddr, r.Method, r.URL.Path, time.Since(startTime))

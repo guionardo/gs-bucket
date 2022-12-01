@@ -9,6 +9,10 @@ import (
 	"github.com/guionardo/gs-bucket/pkg/logger"
 )
 
+const (
+	Version = "v0.0.2"
+)
+
 type Config struct {
 	DataPath string
 	Host     string

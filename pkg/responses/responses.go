@@ -3,6 +3,7 @@ package responses
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 type (
@@ -11,10 +12,12 @@ type (
 	}
 
 	PostResponse struct {
-		Success      bool   `json:"success"`
-		Message      string `json:"message"`
-		FileName     string `json:"fileName"`
-		HashFileName string `json:"hashFileName,omitempty"`
+		Success      bool      `json:"success"`
+		Message      string    `json:"message"`
+		FileName     string    `json:"fileName"`
+		HashFileName string    `json:"hashFileName,omitempty"`
+		ValidUntil   time.Time `json:"validUntil,omitempty"`
+		URL          string    `json:"url,omitempty"`
 	}
 )
 

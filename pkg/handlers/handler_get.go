@@ -12,9 +12,18 @@ import (
 // GET /file_hash
 func getHandler(w http.ResponseWriter, r *http.Request) {
 	file_hash := path.Base(r.URL.Path)
-	if len(file_hash) == 0 || file_hash == "/" {
+	switch file_hash {
+	case "", "/":
+		getHomeHandler(w, r)
+		return
+	case "markdown.css":
+		getMarkdownCssHandler(w, r)
+		return
+	case "store":
 		getIndexHandler(w, r)
 		return
+	}
+	if len(file_hash) == 0 || file_hash == "/" {
 	}
 
 	file, err := _repository.GetFile(file_hash)
