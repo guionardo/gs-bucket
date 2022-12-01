@@ -27,6 +27,7 @@ type (
 
 const (
 	FILE_AGE_BASE = 16 // HEXADECIMAL
+	MetaFormat    = "%s.meta"
 )
 
 var (
@@ -66,7 +67,7 @@ func ReadFile(filename string) (*File, error) {
 	if stat, err := os.Stat(filename); err != nil || stat.IsDir() {
 		return nil, fmt.Errorf("file not found %s", filename)
 	}
-	metaFile := fmt.Sprintf("%s.meta", filename)
+	metaFile := fmt.Sprintf(MetaFormat, filename)
 	if stat, err := os.Stat(metaFile); err != nil || stat.IsDir() {
 		return nil, fmt.Errorf("meta file not found %s", metaFile)
 	}
@@ -87,7 +88,7 @@ func (file *File) Save(name string) (err error) {
 	if err = os.WriteFile(name, file.Content, os.ModePerm); err != nil {
 		return
 	}
-	metaFile := fmt.Sprintf("%s.meta", name)
+	metaFile := fmt.Sprintf(MetaFormat, name)
 	meta, err := json.Marshal(file)
 	if err != nil {
 		return err
@@ -99,7 +100,7 @@ func (file *File) Delete(name string) (err error) {
 	if err = os.Remove(name); err != nil {
 		return
 	}
-	metaFile := fmt.Sprintf("%s.meta", name)
+	metaFile := fmt.Sprintf(MetaFormat, name)
 	return os.Remove(metaFile)
 }
 

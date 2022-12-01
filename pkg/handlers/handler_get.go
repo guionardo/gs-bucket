@@ -11,8 +11,8 @@ import (
 
 // GET /file_hash
 func getHandler(w http.ResponseWriter, r *http.Request) {
-	file_hash := path.Base(r.URL.Path)
-	switch file_hash {
+	fileHash := path.Base(r.URL.Path)
+	switch fileHash {
 	case "", "/":
 		getHomeHandler(w, r)
 		return
@@ -23,10 +23,8 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		getIndexHandler(w, r)
 		return
 	}
-	if len(file_hash) == 0 || file_hash == "/" {
-	}
 
-	file, err := _repository.GetFile(file_hash)
+	file, err := _repository.GetFile(fileHash)
 	if err != nil {
 		responses.WriteResponse(w, http.StatusNotFound, responses.ErrorResponse{Error: err.Error()})
 		return
