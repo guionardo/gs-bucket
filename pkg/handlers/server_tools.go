@@ -8,10 +8,10 @@ import (
 )
 
 func getMimeType(r *http.Request, body []byte) string {
-	// if mime := r.Header.Get("Content-Type"); len(mime) > 0 {
-	// 	return mime
-	// }
-	return mimetype.Detect(body).String()
+	if mime := mimetype.Detect(body).String(); len(mime) > 0 {
+		return mime
+	}
+	return r.Header.Get("Content-Type")
 }
 
 func getTTL(r *http.Request) (time.Duration, error) {
