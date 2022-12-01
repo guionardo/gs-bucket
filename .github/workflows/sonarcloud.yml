@@ -35,7 +35,22 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
+  go:
+    name: Go build and test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19    
+
+    - name: Test
+      run: go test -coverprofile=cov.out -v ./...
+
   sonarcloud:
+    needs: go
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
@@ -53,3 +68,4 @@ jobs:
             # mandatory
             -Dsonar.projectKey=guionardo_gs-bucket
             -Dsonar.organization=guionardo
+            -Dsonar.go.coverage.reportPaths=cov.out

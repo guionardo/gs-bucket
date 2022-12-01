@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -13,15 +14,15 @@ func TestNewConfig(t *testing.T) {
 		if err != nil {
 			t.Errorf("NewConfig() error = %v", err)
 		}
-		if gotConfig.DataPath != "test" {
-			t.Errorf("NewConfig() = %v, want %v", gotConfig.DataPath, "test")
+		expected := &Config{
+			DataPath: "test",
+			Port:     8081,
+			Host:     "localhost",
 		}
-		if gotConfig.Port != 8081 {
-			t.Errorf("NewConfig() = %v, want %v", gotConfig.Port, 8081)
+		if !reflect.DeepEqual(gotConfig, expected) {
+			t.Errorf("NewConfig() = %v, want %v", gotConfig, expected)
 		}
-		if gotConfig.Host != "localhost" {
-			t.Errorf("NewConfig() = %v, want %v", gotConfig.Host, "localhost")
-		}
+
 	})
 
 }
