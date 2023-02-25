@@ -8,4 +8,4 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20221013030248-663e2500819c
 )
 
-require golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e // indirect
+require golang.org/x/net v0.7.0 // indirect
