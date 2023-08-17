@@ -1,0 +1,168 @@
+definitions:
+  domain.File:
+    properties:
+      content_type:
+        type: string
+      creation_date:
+        type: string
+      delete_after_read:
+        type: boolean
+      last_seen:
+        type: string
+      name:
+        type: string
+      seen_count:
+        type: integer
+      size:
+        type: integer
+      slug:
+        type: string
+      valid_until:
+        type: string
+    type: object
+  server.ErrResponse:
+    properties:
+      code:
+        description: application-specific error code
+        type: integer
+      error:
+        description: application-level error message, for debugging
+        type: string
+      status:
+        description: user-level status message
+        type: string
+    type: object
+info:
+  contact:
+    email: guionardo@gmail.com
+    name: Guionardo Furlan
+    url: https://github.com/guionardo/gs-bucket
+  description: This application will run a HTTP server to store files
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: GS-Bucket API
+  version: "1.0"
+paths:
+  /pads:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.File'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+      summary: List pads
+      tags:
+      - pads
+  /pads/{code}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: File code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+      summary: Delete a pad
+      tags:
+      - pads
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: File code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+      summary: Download a pad
+      tags:
+      - pads
+  /pads/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Post a file to a pad, accessible for anyone
+      parameters:
+      - description: File name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Time to live
+        in: query
+        name: ttl
+        type: string
+      - description: If informed, the file will be deleted after first download
+        in: query
+        name: just-one-time
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.File'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+      summary: Create a pad
+      tags:
+      - pads
+swagger: "2.0"

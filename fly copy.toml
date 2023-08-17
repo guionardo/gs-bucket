@@ -5,14 +5,12 @@ kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
-# [build]
+#[build]
 #  builder = "paketobuildpacks/builder:base"
 #  buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
 [env]
   PORT = "8080"
-  GS_BUCKET_REPOSITORY_FOLDER = "/bucket"
-  GS_BUCKET_HTTP_PORT = "8080"
 
 [experimental]
   allowed_public_ports = []

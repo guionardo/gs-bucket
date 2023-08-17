@@ -10,11 +10,9 @@
 ![this-version](https://img.shields.io/badge/This%20Version-$THISVERSION$-blue)
 ![release](https://img.shields.io/github/v/release/guionardo/gs-bucket?display_name=tag&style=flat-square)
 
-
 Temporary web file transfer
 
 This application will run a HTTP server to store files
-
 
 ## Endpoints
 
@@ -22,7 +20,8 @@ This application will run a HTTP server to store files
 
 ### [Stored files](/store)
 
-<pre><code>
+<pre>
+<code>
 [
   {
     "name": "teste3.json",
@@ -34,18 +33,19 @@ This application will run a HTTP server to store files
     "url": "http://gs-bucket.fly.dev/63890ee3_dGVzdGUzLmpzb24="
   }
 ]
-</code></pre>
+</code>
+</pre>
 
 ### Sending a file
 
 <pre>
 <code>
-POST filename.ext 
+POST filename.ext
 </code></pre>
 
 Optional parameters (used with headers or queries)
 
-* Setting time-to-live (after this time, the file will be deleted): *ttl*
+- Setting time-to-live (after this time, the file will be deleted): _ttl_
 
 Example: send file with 30 minutes of life. You can use the time.Duration golang pattern (15s, 1h30m, 50m, etc).
 
@@ -54,7 +54,7 @@ $ curl -X POST https://gs-bucket.fly.dev/postgres.sql?ttl=30m -d @postgres.sql
 {"success":true,"message":"File uploaded successfully","fileName":"postgres.sql","hashFileName":"63894bec_cG9zdGdyZXMuc3Fs", "url": "http://gs-bucket.fly.dev/63894bec_cG9zdGdyZXMuc3Fs}
 </code></pre>
 
-* Setting content type: Content-Type. If not informed, will try to detect the mime type of data.
+- Setting content type: Content-Type. If not informed, will try to detect the mime type of data.
 
 <pre><code>
 $ curl -X POST https://gs-bucket.fly.dev/postgres.sql  -H "Content-Type: application/json" -d @postgres.sql
@@ -68,7 +68,7 @@ $ curl -X POST https://gs-bucket.fly.dev/postgres.sql -d @postgres.sql
 
 ### Getting a file
 
-Use the URL data from POST result 
+Use the URL data from POST result
 
 <pre><code>
 $ curl http://gs-bucket.fly.dev/63894bec_cG9zdGdyZXMuc3Fs
@@ -78,9 +78,8 @@ $ curl http://gs-bucket.fly.dev/63894bec_cG9zdGdyZXMuc3Fs
 ### Deleting a file
 
 Use the same URL to get the file, just using the DELETE METHOD
+
 <pre><code>
 $ curl -X DELETE http://gs-bucket.fly.dev/63890ee3_dGVzdGUzLmpzb24=
 {"success":true,"message":"File deleted successfully","fileName":"teste3.json","hashFileName":"63890ee3_dGVzdGUzLmpzb24=","validUntil":"0001-01-01T00:00:00Z"}
 </code></pre>
-
-
