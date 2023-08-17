@@ -11,8 +11,6 @@ RUN go mod download
 
 # COPY gs-bucket.go .
 COPY main.go .
-# COPY cmd ./cmd/
-COPY pkg ./pkg/
 COPY backend ./backend/
 COPY domain ./domain/
 COPY README.md .

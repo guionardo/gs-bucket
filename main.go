@@ -15,15 +15,11 @@ import (
 )
 
 //	@title			GS-Bucket API
-//	@version		1.0
+//	@version		0.3
 //	@description	This application will run a HTTP server to store files
-//	@termsOfService	http://swagger.io/terms/
 //	@contact.name	Guionardo Furlan
 //	@contact.url	https://github.com/guionardo/gs-bucket
 //	@contact.email	guionardo@gmail.com
-//	@license.name	Apache 2.0
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-
 func main() {
 	config, err := server.GetConfig()
 	if err != nil {

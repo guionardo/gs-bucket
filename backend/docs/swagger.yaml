@@ -38,12 +38,8 @@ info:
     name: Guionardo Furlan
     url: https://github.com/guionardo/gs-bucket
   description: This application will run a HTTP server to store files
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
   title: GS-Bucket API
-  version: "1.0"
+  version: "0.3"
 paths:
   /pads:
     get:
