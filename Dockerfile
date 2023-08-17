@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine as backend-dev
+FROM golang:1.21-alpine as backend-dev
 
 WORKDIR /app
 RUN apk add build-base
@@ -9,9 +9,10 @@ COPY ./go.mod ./go.sum ./
 # Download all required packages
 RUN go mod download
 
-COPY gs-bucket.go .
-COPY cmd ./cmd/
-COPY pkg ./pkg/
+# COPY gs-bucket.go .
+COPY main.go .
+COPY backend ./backend/
+COPY domain ./domain/
 COPY README.md .
 
 RUN GOOS=linux go build -o gs-bucket .
@@ -28,4 +29,6 @@ RUN apk add --no-cache tzdata
 
 WORKDIR /root/
 COPY --from=backend-dev /app/gs-bucket .
-CMD ["./gs-bucket", "--data-path", "./data"]
+
+RUN mkdir /bucket
+CMD ["./gs-bucket"]

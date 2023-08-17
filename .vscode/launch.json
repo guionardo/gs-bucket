@@ -9,8 +9,14 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/gs-bucket.go",
-      "args": ["--data-path", "./data"]
+      "program": "${workspaceFolder}/main.go",
+      "args": [
+        "--data-path",
+        "./data"
+      ],
+      "env": {
+        "GS_BUCKET_REPOSITORY_FOLDER": "${workspaceFolder}/data"
+      }
     }
   ]
 }
