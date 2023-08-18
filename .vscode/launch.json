@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Inject swagger in README",
+      "program": "${workspaceFolder}/.github/scripts/inject_swagger_in_readme.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
       "name": "Launch Package",
       "type": "go",
       "request": "launch",
