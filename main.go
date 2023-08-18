@@ -14,12 +14,12 @@ import (
 	"github.com/guionardo/gs-bucket/backend/server"
 )
 
-//	@title			GS-Bucket API
-//	@version		0.3
-//	@description	This application will run a HTTP server to store files
-//	@contact.name	Guionardo Furlan
-//	@contact.url	https://github.com/guionardo/gs-bucket
-//	@contact.email	guionardo@gmail.com
+// @title			GS-Bucket API
+// @version		0.3
+// @description	This application will run a HTTP server to store files
+// @contact.name	Guionardo Furlan
+// @contact.url	https://github.com/guionardo/gs-bucket
+// @contact.email	guionardo@gmail.com
 func main() {
 	config, err := server.GetConfig()
 	if err != nil {
@@ -61,8 +61,7 @@ func main() {
 		serverStopCtx()
 		cancel()
 	}()
-
-	log.Printf("Starting service %s", httpServer.Addr)
+	log.Printf("Starting GS-Bucket service @ %s", httpServer.Addr)
 	// Run the server
 	if err = httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)

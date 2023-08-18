@@ -9,5 +9,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_swagger
+    environment:
+      - user=${USER}
     volumes:
       - ./:/output
