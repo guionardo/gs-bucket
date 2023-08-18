@@ -19,7 +19,7 @@ RUN GOOS=linux go build -o gs-bucket .
 #RUN CGO_ENABLED=1 GOOS=linux go build -o gs-bucket  -ldflags="-X 'main.Build=$(date +%Y-%m-%dT%H:%M:%S%z)'" cmd/gs-bucket.go
 
 
-FROM alpine:latest as final-build
+FROM alpine:latest AS final-build
 # FROM cgr.dev/chainguard/static:latest as final-build
 # Ensure updated CA certificates
 RUN apk --no-cache add ca-certificates

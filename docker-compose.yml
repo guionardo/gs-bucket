@@ -4,3 +4,12 @@ services:
     build: .
     ports:
       - "8080:8080"
+
+  swagger:
+    build:
+      context: .
+      dockerfile: Dockerfile_swagger
+    environment:
+      - user=${USER}
+    volumes:
+      - ./:/output

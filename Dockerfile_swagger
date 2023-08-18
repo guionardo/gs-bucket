@@ -1,0 +1,16 @@
+FROM node:alpine
+
+WORKDIR /app
+
+ARG user
+
+RUN npm install -g npm install -g widdershins
+
+COPY backend/docs/swagger.json ./
+COPY .github/scripts/inject_swagger_in_readme.js ./
+COPY README.md ./
+
+RUN widdershins swagger.json -o SWAGGER.md
+RUN node inject_swagger_in_readme.js
+
+CMD cp README.md /output/README.md ; chmod 666 /output/README.md
