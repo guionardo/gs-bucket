@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -63,6 +64,9 @@ func Service(_repository repo.Repository) http.Handler {
 //	@Accept			json
 //	@Produce		json
 //	@Param			name				query		string	true	"File name"
+//
+//	@Param			slug				query		string	false	"Slug or easy name (if not informed, will be used a hash value)"
+//
 //	@Param			ttl					query		string	false	"Time to live"
 //	@Param			delete-after-read	query		bool	false	"If informed, the file will be deleted after first download"
 //	@Param			content				body		string	true	"Content"
@@ -75,6 +79,10 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if len(name) == 0 {
 		renderError(w, r, http.StatusBadRequest, "Required name argument")
+		return
+	}
+	if contentLengthHeader := r.Header.Get("Content-Length"); len(contentLengthHeader) == 0 {
+		renderError(w, r, http.StatusBadRequest, "Required Content-Length header")
 		return
 	}
 
@@ -91,6 +99,9 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, err := domain.CreateFileFromData(name, body, ttl)
+	if slug := r.URL.Query().Get("slug"); len(slug) > 0 {
+		file.Slug = url.QueryEscape(slug)
+	}
 
 	file.DeleteAfterRead = deleteAfterRead
 

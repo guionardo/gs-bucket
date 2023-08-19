@@ -15,7 +15,7 @@ import (
 )
 
 // @title			GS-Bucket API
-// @version		0.4
+// @version		0.5
 // @description	This application will run a HTTP server to store files
 // @contact.name	Guionardo Furlan
 // @contact.url	https://github.com/guionardo/gs-bucket

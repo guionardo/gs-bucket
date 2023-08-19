@@ -81,6 +81,8 @@ func (c *GSBucketClient) CreatePad(name string, ttl time.Duration, deleteAfterRe
 	if req, err = http.NewRequest(http.MethodPost, url, body); err != nil {
 		return
 	}
+	req.Header.Add("Content-Length", fmt.Sprintf("%d", len(content)))
+
 	resp, err := c.client.Do(req)
 	if err == nil {
 		if resp.StatusCode != http.StatusCreated {

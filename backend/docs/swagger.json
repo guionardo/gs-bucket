@@ -8,7 +8,7 @@
             "url": "https://github.com/guionardo/gs-bucket",
             "email": "guionardo@gmail.com"
         },
-        "version": "0.4"
+        "version": "0.5"
     },
     "paths": {
         "/pads": {
@@ -66,6 +66,12 @@
                         "name": "name",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Slug or easy name (if not informed, will be used a hash value)",
+                        "name": "slug",
+                        "in": "query"
                     },
                     {
                         "type": "string",

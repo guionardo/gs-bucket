@@ -19,7 +19,7 @@ This application will run a HTTP server to store files
 
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="gs-bucket-api">GS-Bucket API v0.4</h1>
+<h1 id="gs-bucket-api">GS-Bucket API v0.5</h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -387,6 +387,7 @@ Post a file to a pad, accessible for anyone
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |name|query|string|true|File name|
+|slug|query|string|false|Slug or easy name (if not informed, will be used a hash value)|
 |ttl|query|string|false|Time to live|
 |delete-after-read|query|boolean|false|If informed, the file will be deleted after first download|
 |body|body|string|true|Content|
@@ -823,4 +824,4 @@ This operation does not require authentication
 |status|string|false|none|user-level status message|
 
 
-_swagger data generated @ Sat Aug 19 2023 01:19:43 GMT+0000 (Coordinated Universal Time)_
+_swagger data generated @ Sat Aug 19 2023 10:56:01 GMT+0000 (Coordinated Universal Time)_

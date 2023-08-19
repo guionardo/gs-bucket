@@ -39,7 +39,7 @@ info:
     url: https://github.com/guionardo/gs-bucket
   description: This application will run a HTTP server to store files
   title: GS-Bucket API
-  version: "0.4"
+  version: "0.5"
 paths:
   /pads:
     get:
@@ -74,6 +74,10 @@ paths:
         in: query
         name: name
         required: true
+        type: string
+      - description: Slug or easy name (if not informed, will be used a hash value)
+        in: query
+        name: slug
         type: string
       - description: Time to live
         in: query

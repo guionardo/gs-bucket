@@ -78,6 +78,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Slug or easy name (if not informed, will be used a hash value)",
+                        "name": "slug",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Time to live",
                         "name": "ttl",
                         "in": "query"
@@ -266,7 +272,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.4",
+	Version:          "0.5",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
