@@ -117,14 +117,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/server.ErrResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/server.ErrResponse"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "507": {
+                        "description": "Insufficient Storage",
                         "schema": {
                             "$ref": "#/definitions/server.ErrResponse"
                         }

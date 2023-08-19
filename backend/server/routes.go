@@ -72,8 +72,8 @@ func Service(_repository repo.Repository) http.Handler {
 //	@Param			content				body		string	true	"Content"
 //	@Success		201					{object}	domain.File
 //	@Failure		400					{object}	server.ErrResponse
-//	@Failure		404					{object}	server.ErrResponse
 //	@Failure		500					{object}	server.ErrResponse
+//	@Failure		507					{object}	server.ErrResponse
 //	@Router			/pads [post]
 func CreatePad(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
