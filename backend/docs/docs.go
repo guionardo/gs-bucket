@@ -55,6 +55,75 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Post a file to a pad, accessible for anyone",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pads"
+                ],
+                "summary": "Create a pad",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "File name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Time to live",
+                        "name": "ttl",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "If informed, the file will be deleted after first download",
+                        "name": "delete-after-read",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Content",
+                        "name": "content",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.File"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrResponse"
+                        }
+                    }
+                }
             }
         },
         "/pads/{code}": {
@@ -140,68 +209,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/pads/{id}": {
-            "post": {
-                "description": "Post a file to a pad, accessible for anyone",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "pads"
-                ],
-                "summary": "Create a pad",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "File name",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Time to live",
-                        "name": "ttl",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "If informed, the file will be deleted after first download",
-                        "name": "just-one-time",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.File"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -259,7 +266,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.3",
+	Version:          "0.4",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},

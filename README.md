@@ -19,7 +19,7 @@ This application will run a HTTP server to store files
 
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="gs-bucket-api">GS-Bucket API v0.3</h1>
+<h1 id="gs-bucket-api">GS-Bucket API v0.4</h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -216,6 +216,207 @@ Status Code **200**
 |» size|integer|false|none|none|
 |» slug|string|false|none|none|
 |» valid_until|string|false|none|none|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## post__pads
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST /pads?name=string \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json'
+
+```
+
+```http
+POST /pads?name=string HTTP/1.1
+
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+const inputBody = 'string';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('/pads?name=string',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json'
+}
+
+result = RestClient.post '/pads',
+  params: {
+  'name' => 'string'
+}, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/pads', params={
+  'name': 'string'
+}, headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Content-Type' => 'application/json',
+    'Accept' => 'application/json',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('POST','/pads', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("/pads?name=string");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Content-Type": []string{"application/json"},
+        "Accept": []string{"application/json"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("POST", "/pads", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`POST /pads`
+
+*Create a pad*
+
+Post a file to a pad, accessible for anyone
+
+> Body parameter
+
+```json
+"string"
+```
+
+<h3 id="post__pads-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|name|query|string|true|File name|
+|ttl|query|string|false|Time to live|
+|delete-after-read|query|boolean|false|If informed, the file will be deleted after first download|
+|body|body|string|true|Content|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "content_type": "string",
+  "creation_date": "string",
+  "delete_after_read": true,
+  "last_seen": "string",
+  "name": "string",
+  "seen_count": 0,
+  "size": 0,
+  "slug": "string",
+  "valid_until": "string"
+}
+```
+
+<h3 id="post__pads-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|[domain.File](#schemadomain.file)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad Request|[server.ErrResponse](#schemaserver.errresponse)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Not Found|[server.ErrResponse](#schemaserver.errresponse)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
 
 <aside class="success">
 This operation does not require authentication
@@ -559,193 +760,6 @@ func main() {
 This operation does not require authentication
 </aside>
 
-## post__pads_{id}
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST /pads/{id}?name=string \
-  -H 'Accept: application/json'
-
-```
-
-```http
-POST /pads/{id}?name=string HTTP/1.1
-
-Accept: application/json
-
-```
-
-```javascript
-
-const headers = {
-  'Accept':'application/json'
-};
-
-fetch('/pads/{id}?name=string',
-{
-  method: 'POST',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/json'
-}
-
-result = RestClient.post '/pads/{id}',
-  params: {
-  'name' => 'string'
-}, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
-
-r = requests.post('/pads/{id}', params={
-  'name': 'string'
-}, headers = headers)
-
-print(r.json())
-
-```
-
-```php
-<?php
-
-require 'vendor/autoload.php';
-
-$headers = array(
-    'Accept' => 'application/json',
-);
-
-$client = new \GuzzleHttp\Client();
-
-// Define array of request body.
-$request_body = array();
-
-try {
-    $response = $client->request('POST','/pads/{id}', array(
-        'headers' => $headers,
-        'json' => $request_body,
-       )
-    );
-    print_r($response->getBody()->getContents());
- }
- catch (\GuzzleHttp\Exception\BadResponseException $e) {
-    // handle exception or api errors.
-    print_r($e->getMessage());
- }
-
- // ...
-
-```
-
-```java
-URL obj = new URL("/pads/{id}?name=string");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/json"},
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "/pads/{id}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /pads/{id}`
-
-*Create a pad*
-
-Post a file to a pad, accessible for anyone
-
-<h3 id="post__pads_{id}-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|name|query|string|true|File name|
-|ttl|query|string|false|Time to live|
-|just-one-time|query|boolean|false|If informed, the file will be deleted after first download|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "content_type": "string",
-  "creation_date": "string",
-  "delete_after_read": true,
-  "last_seen": "string",
-  "name": "string",
-  "seen_count": 0,
-  "size": 0,
-  "slug": "string",
-  "valid_until": "string"
-}
-```
-
-<h3 id="post__pads_{id}-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[domain.File](#schemadomain.file)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad Request|[server.ErrResponse](#schemaserver.errresponse)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Not Found|[server.ErrResponse](#schemaserver.errresponse)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
 # Schemas
 
 <h2 id="tocS_domain.File">domain.File</h2>
@@ -809,4 +823,4 @@ This operation does not require authentication
 |status|string|false|none|user-level status message|
 
 
-_swagger data generated @ Fri Aug 18 2023 19:52:01 GMT+0000 (Coordinated Universal Time)_
+_swagger data generated @ Sat Aug 19 2023 01:19:43 GMT+0000 (Coordinated Universal Time)_

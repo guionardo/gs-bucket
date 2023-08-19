@@ -62,14 +62,15 @@ func Service(_repository repo.Repository) http.Handler {
 //	@Tags			pads
 //	@Accept			json
 //	@Produce		json
-//	@Param			name			query		string	true	"File name"
-//	@Param			ttl				query		string	false	"Time to live"
-//	@Param			just-one-time	query		bool	false	"If informed, the file will be deleted after first download"
-//	@Success		200				{object}	domain.File
-//	@Failure		400				{object}	server.ErrResponse
-//	@Failure		404				{object}	server.ErrResponse
-//	@Failure		500				{object}	server.ErrResponse
-//	@Router			/pads/{id} [post]
+//	@Param			name				query		string	true	"File name"
+//	@Param			ttl					query		string	false	"Time to live"
+//	@Param			delete-after-read	query		bool	false	"If informed, the file will be deleted after first download"
+//	@Param			content				body		string	true	"Content"
+//	@Success		201					{object}	domain.File
+//	@Failure		400					{object}	server.ErrResponse
+//	@Failure		404					{object}	server.ErrResponse
+//	@Failure		500					{object}	server.ErrResponse
+//	@Router			/pads [post]
 func CreatePad(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if len(name) == 0 {
@@ -78,7 +79,7 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ttl, _ := time.ParseDuration(chi.URLParam(r, "ttl"))
-	justOneTime := r.URL.Query().Has("just-one-time")
+	deleteAfterRead := r.URL.Query().Has("delete-after-read")
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		renderError(w, r, http.StatusInternalServerError, err.Error())
@@ -91,7 +92,7 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 
 	file, err := domain.CreateFileFromData(name, body, ttl)
 
-	file.DeleteAfterRead = justOneTime
+	file.DeleteAfterRead = deleteAfterRead
 
 	if err != nil {
 		renderError(w, r, http.StatusInternalServerError,
