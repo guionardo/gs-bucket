@@ -19,13 +19,53 @@ This application will run a HTTP server to store files
 
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="gs-bucket-api">GS-Bucket API v0.5</h1>
+<h1 id="gs-bucket-api">GS-Bucket API v0.0.5</h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
 This application will run a HTTP server to store files
 
 Email: <a href="mailto:guionardo@gmail.com">Guionardo Furlan</a> Web: <a href="https://github.com/guionardo/gs-bucket">Guionardo Furlan</a>
+
+<h1 id="gs-bucket-api-auth">auth</h1>
+
+## post__auth_{user}
+
+`POST /auth/{user}`
+
+*Create a key for a user*
+
+Post a file to a pad, accessible for anyone
+
+<h3 id="post__auth_{user}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|api-key|header|string|true|API Key|
+|user|path|string|true|User name|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "key": "string",
+  "user": "string"
+}
+```
+
+<h3 id="post__auth_{user}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|[domain.AuthResponse](#schemadomain.authresponse)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[server.ErrResponse](#schemaserver.errresponse)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
 
 <h1 id="gs-bucket-api-pads">pads</h1>
 
@@ -47,6 +87,7 @@ Email: <a href="mailto:guionardo@gmail.com">Guionardo Furlan</a> Web: <a href="h
     "delete_after_read": true,
     "last_seen": "string",
     "name": "string",
+    "owner": "string",
     "seen_count": 0,
     "size": 0,
     "slug": "string",
@@ -75,6 +116,7 @@ Status Code **200**
 |» delete_after_read|boolean|false|none|none|
 |» last_seen|string|false|none|none|
 |» name|string|false|none|none|
+|» owner|string|false|none|none|
 |» seen_count|integer|false|none|none|
 |» size|integer|false|none|none|
 |» slug|string|false|none|none|
@@ -102,10 +144,11 @@ Post a file to a pad, accessible for anyone
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
+|api-key|header|string|true|API Key|
 |name|query|string|true|File name|
 |slug|query|string|false|Slug or easy name (if not informed, will be used a hash value)|
 |ttl|query|string|false|Time to live|
-|delete-after-read|query|boolean|false|If informed, the file will be deleted after first download|
+|delete-after-read|query|boolean|false|If informed, the file will be deleted after first download. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as |
 |body|body|string|true|Content|
 
 > Example responses
@@ -119,6 +162,7 @@ Post a file to a pad, accessible for anyone
   "delete_after_read": true,
   "last_seen": "string",
   "name": "string",
+  "owner": "string",
   "seen_count": 0,
   "size": 0,
   "slug": "string",
@@ -205,6 +249,28 @@ This operation does not require authentication
 
 # Schemas
 
+<h2 id="tocS_domain.AuthResponse">domain.AuthResponse</h2>
+<!-- backwards compatibility -->
+<a id="schemadomain.authresponse"></a>
+<a id="schema_domain.AuthResponse"></a>
+<a id="tocSdomain.authresponse"></a>
+<a id="tocsdomain.authresponse"></a>
+
+```json
+{
+  "key": "string",
+  "user": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|key|string|false|none|none|
+|user|string|false|none|none|
+
 <h2 id="tocS_domain.File">domain.File</h2>
 <!-- backwards compatibility -->
 <a id="schemadomain.file"></a>
@@ -219,6 +285,7 @@ This operation does not require authentication
   "delete_after_read": true,
   "last_seen": "string",
   "name": "string",
+  "owner": "string",
   "seen_count": 0,
   "size": 0,
   "slug": "string",
@@ -236,6 +303,7 @@ This operation does not require authentication
 |delete_after_read|boolean|false|none|none|
 |last_seen|string|false|none|none|
 |name|string|false|none|none|
+|owner|string|false|none|none|
 |seen_count|integer|false|none|none|
 |size|integer|false|none|none|
 |slug|string|false|none|none|
@@ -266,4 +334,4 @@ This operation does not require authentication
 |status|string|false|none|user-level status message|
 
 
-_swagger data generated @ Sat Aug 19 2023 11:02:19 GMT+0000 (Coordinated Universal Time)_
+_swagger data generated @ Sun Aug 20 2023 14:50:02 GMT+0000 (Coordinated Universal Time)_

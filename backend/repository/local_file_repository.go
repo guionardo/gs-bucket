@@ -70,6 +70,7 @@ func CreateLocalRepository(rootPath string) (*LocalRepository, error) {
 	if _, err := os.Stat(rootPath); err != nil {
 		return nil, err
 	}
+	log.Printf("Local repository: %s", rootPath)
 	return &LocalRepository{
 		rootPath:  rootPath,
 		indexFile: path.Join(rootPath, ".index"),

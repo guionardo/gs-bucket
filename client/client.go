@@ -14,12 +14,14 @@ import (
 
 type GSBucketClient struct {
 	baseUrl string
+	apiKey  string
 	client  *http.Client
 }
 
-func CreateGSBucketClient(baseUrl string) *GSBucketClient {
+func CreateGSBucketClient(baseUrl string, apiKey string) *GSBucketClient {
 	return &GSBucketClient{
 		baseUrl: baseUrl,
+		apiKey:  apiKey,
 		client:  http.DefaultClient,
 	}
 }
@@ -67,12 +69,15 @@ func (c *GSBucketClient) GetPad(code string) (file []byte, err error) {
 	return io.ReadAll(res.Body)
 }
 
-func (c *GSBucketClient) CreatePad(name string, ttl time.Duration, deleteAfterRead bool, content []byte) (file *domain.File, err error) {
+func (c *GSBucketClient) CreatePad(name string, ttl time.Duration, deleteAfterRead bool, content []byte, slug string) (file *domain.File, err error) {
 	params := url.Values{}
 	params.Add("name", name)
 	params.Add("ttl", ttl.String())
 	if deleteAfterRead {
 		params.Add("delete-after-read", "true")
+	}
+	if len(slug) > 0 {
+		params.Add("slug", slug)
 	}
 	body := bytes.NewReader(content)
 	var req *http.Request
@@ -81,6 +86,7 @@ func (c *GSBucketClient) CreatePad(name string, ttl time.Duration, deleteAfterRe
 	if req, err = http.NewRequest(http.MethodPost, url, body); err != nil {
 		return
 	}
+	req.Header.Add("api-key", c.apiKey)
 	req.Header.Add("Content-Length", fmt.Sprintf("%d", len(content)))
 
 	resp, err := c.client.Do(req)

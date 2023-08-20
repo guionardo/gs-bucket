@@ -1,6 +1,7 @@
 package server
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strconv"
@@ -17,19 +18,37 @@ const (
 )
 
 func GetConfig() (cfg *Config, err error) {
-	repoFolder := os.Getenv(RepositoryFolder)
+	repoFolder, httpPort := parseFlags()
 	if len(repoFolder) == 0 {
-		err = fmt.Errorf("MISSING %s ENVIRONMENT", RepositoryFolder)
-		return
+		if repoFolder = os.Getenv(RepositoryFolder); len(repoFolder) == 0 {
+			err = fmt.Errorf("MISSING %s ENVIRONMENT", RepositoryFolder)
+			return
+		}
 	}
 
-	httpPort := 0
-	if httpPort, _ = strconv.Atoi(os.Getenv(HttpPort)); httpPort < 80 {
-		httpPort = 8080
+	if httpPort < 80 || httpPort > 65535 {
+		if httpPort, _ = strconv.Atoi(os.Getenv(HttpPort)); httpPort < 80 || httpPort > 65535 {
+			httpPort = 8080
+		}
 	}
 	cfg = &Config{
 		RepositoryFolder: repoFolder,
 		HttpPort:         httpPort,
 	}
 	return
+}
+
+var (
+	repoFolder string
+	httpPort   int
+)
+
+func init() {
+	flag.StringVar(&repoFolder, "repository", "", "Repository folder")
+	flag.IntVar(&httpPort, "port", 0, "HTTP server port")
+}
+
+func parseFlags() (repoFolder string, httpPort int) {
+	flag.Parse()
+	return repoFolder, httpPort
 }

@@ -1,4 +1,11 @@
 definitions:
+  domain.AuthResponse:
+    properties:
+      key:
+        type: string
+      user:
+        type: string
+    type: object
   domain.File:
     properties:
       content_type:
@@ -10,6 +17,8 @@ definitions:
       last_seen:
         type: string
       name:
+        type: string
+      owner:
         type: string
       seen_count:
         type: integer
@@ -39,8 +48,42 @@ info:
     url: https://github.com/guionardo/gs-bucket
   description: This application will run a HTTP server to store files
   title: GS-Bucket API
-  version: "0.5"
+  version: 0.0.5
 paths:
+  /auth/{user}:
+    post:
+      consumes:
+      - application/json
+      description: Post a file to a pad, accessible for anyone
+      parameters:
+      - description: API Key
+        in: header
+        name: api-key
+        required: true
+        type: string
+      - description: User name
+        in: path
+        name: user
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.AuthResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+      summary: Create a key for a user
+      tags:
+      - auth
   /pads:
     get:
       consumes:
@@ -70,6 +113,11 @@ paths:
       - application/json
       description: Post a file to a pad, accessible for anyone
       parameters:
+      - description: API Key
+        in: header
+        name: api-key
+        required: true
+        type: string
       - description: File name
         in: query
         name: name
@@ -83,7 +131,9 @@ paths:
         in: query
         name: ttl
         type: string
-      - description: If informed, the file will be deleted after first download
+      - description: 'If informed, the file will be deleted after first download.
+          A duration string is a possibly signed sequence of decimal numbers, each
+          with optional fraction and a unit suffix, such as '
         in: query
         name: delete-after-read
         type: boolean

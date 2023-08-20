@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
+	"github.com/go-chi/telemetry"
 	_ "github.com/guionardo/gs-bucket/backend/docs"
 	repo "github.com/guionardo/gs-bucket/backend/repository"
 	"github.com/guionardo/gs-bucket/domain"
@@ -32,6 +32,9 @@ func Service(_repository repo.Repository) http.Handler {
 	r := chi.NewRouter()
 	r.Use(
 		middleware.Logger,
+		telemetry.Collector(telemetry.Config{
+			AllowAny: true,
+		}, []string{"/pads", "/swagger"}), // path prefix filters basically records generic http request metrics
 		middleware.Compress(5, "application/json", "text/css", "text/html"),
 		middleware.Recoverer,
 	)
@@ -53,6 +56,10 @@ func Service(_repository repo.Repository) http.Handler {
 			r.Delete("/", DeletePad)
 		})
 	})
+	r.Route("/auth", func(r chi.Router) {
+		r.Use(BasicAuth)
+		r.Post("/{user}", CreateUser)
+	})
 	return r
 }
 
@@ -63,12 +70,11 @@ func Service(_repository repo.Repository) http.Handler {
 //	@Tags			pads
 //	@Accept			json
 //	@Produce		json
+//	@Param			api-key				header		string	true	"API Key"
 //	@Param			name				query		string	true	"File name"
-//
 //	@Param			slug				query		string	false	"Slug or easy name (if not informed, will be used a hash value)"
-//
 //	@Param			ttl					query		string	false	"Time to live"
-//	@Param			delete-after-read	query		bool	false	"If informed, the file will be deleted after first download"
+//	@Param			delete-after-read	query		bool	false	"If informed, the file will be deleted after first download. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". "
 //	@Param			content				body		string	true	"Content"
 //	@Success		201					{object}	domain.File
 //	@Failure		400					{object}	server.ErrResponse
@@ -76,6 +82,12 @@ func Service(_repository repo.Repository) http.Handler {
 //	@Failure		507					{object}	server.ErrResponse
 //	@Router			/pads [post]
 func CreatePad(w http.ResponseWriter, r *http.Request) {
+	owner, err := auth.IsAuthorized(r)
+	if err != nil {
+		renderError(w, r, http.StatusUnauthorized, err.Error())
+		return
+	}
+
 	name := r.URL.Query().Get("name")
 	if len(name) == 0 {
 		renderError(w, r, http.StatusBadRequest, "Required name argument")
@@ -86,7 +98,7 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ttl, _ := time.ParseDuration(chi.URLParam(r, "ttl"))
+	ttl, _ := time.ParseDuration(r.URL.Query().Get("ttl"))
 	deleteAfterRead := r.URL.Query().Has("delete-after-read")
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -98,9 +110,9 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, err := domain.CreateFileFromData(name, body, ttl)
+	file, err := domain.CreateFileFromData(name, body, ttl, owner)
 	if slug := r.URL.Query().Get("slug"); len(slug) > 0 {
-		file.Slug = url.QueryEscape(slug)
+		_ = file.SetSlug(slug)
 	}
 
 	file.DeleteAfterRead = deleteAfterRead

@@ -108,3 +108,7 @@
 **/cmd/data
 **/data
 **/gs-bucket
+
+# Key files
+master.key
+users.key

@@ -107,3 +107,5 @@ dist
 cmd/data
 data
 gs-bucket
+master.key
+users.key

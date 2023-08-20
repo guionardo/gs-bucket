@@ -14,7 +14,7 @@ func TestLocalRepository_save_and_load_data(t *testing.T) {
 	hash := ""
 	data := []byte(`{"name":"Guionardo"}`)
 	t.Run("Save", func(t *testing.T) {
-		file1, _ := domain.CreateFileFromData("test1.json", data, 10*time.Minute)
+		file1, _ := domain.CreateFileFromData("test1.json", data, 10*time.Minute, "owner")
 		_ = repo.SaveFile(file1, data)
 		if err := repo.saveFileMap(); err != nil {
 			t.Errorf("LocalRepository.saveFileMap() error = %v", err)

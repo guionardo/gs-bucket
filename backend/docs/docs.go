@@ -20,6 +20,57 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/{user}": {
+            "post": {
+                "description": "Post a file to a pad, accessible for anyone",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Create a key for a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key",
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User name",
+                        "name": "user",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/pads": {
             "get": {
                 "consumes": [
@@ -71,6 +122,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "API Key",
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "File name",
                         "name": "name",
                         "in": "query",
@@ -90,7 +148,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
-                        "description": "If informed, the file will be deleted after first download",
+                        "description": "If informed, the file will be deleted after first download. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as ",
                         "name": "delete-after-read",
                         "in": "query"
                     },
@@ -218,6 +276,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.File": {
             "type": "object",
             "properties": {
@@ -234,6 +303,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "owner": {
                     "type": "string"
                 },
                 "seen_count": {
@@ -272,7 +344,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.5",
+	Version:          "0.0.5",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},

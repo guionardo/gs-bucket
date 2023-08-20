@@ -15,12 +15,11 @@ COPY backend ./backend/
 COPY domain ./domain/
 COPY README.md .
 
-RUN GOOS=linux go build -o gs-bucket .
-#RUN CGO_ENABLED=1 GOOS=linux go build -o gs-bucket  -ldflags="-X 'main.Build=$(date +%Y-%m-%dT%H:%M:%S%z)'" cmd/gs-bucket.go
+RUN GOOS=linux go build -o gs-bucket -ldflags="-X 'main.Build=$(date +%Y-%m-%dT%H:%M:%S%z)'" .
+#RUN CGO_ENABLED=1 GOOS=linux go build -o gs-bucket  -ldflags="-X 'main.Build=$(date +%Y-%m-%dT%H:%M:%S%z)'" .
 
 
 FROM alpine:latest AS final-build
-# FROM cgr.dev/chainguard/static:latest as final-build
 # Ensure updated CA certificates
 RUN apk --no-cache add ca-certificates
 
@@ -28,7 +27,11 @@ RUN apk --no-cache add ca-certificates
 RUN apk add --no-cache tzdata
 
 WORKDIR /root/
+COPY .github/scripts/create_masterkey.sh .
 COPY --from=backend-dev /app/gs-bucket .
 
 RUN mkdir /bucket
+
+RUN sh create_masterkey.sh
+
 CMD ["./gs-bucket"]
