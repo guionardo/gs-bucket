@@ -10,4 +10,7 @@ type Repository interface {
 	Delete(hash string) error
 	List() ([]*domain.File, error)
 	Purge()
+
+	GetFileCount() int
+	GetFileSize() int64
 }

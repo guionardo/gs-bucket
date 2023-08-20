@@ -50,7 +50,65 @@ info:
   title: GS-Bucket API
   version: 0.0.5
 paths:
+  /auth/:
+    get:
+      parameters:
+      - description: API Key (master key)
+        in: header
+        name: api-key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/domain.AuthResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+      summary: List all users allowed to publish
+      tags:
+      - auth
   /auth/{user}:
+    delete:
+      parameters:
+      - description: API Key
+        in: header
+        name: api-key
+        required: true
+        type: string
+      - description: User name
+        in: path
+        name: user
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrResponse'
+      summary: Delete all keys of user
+      tags:
+      - auth
     post:
       consumes:
       - application/json

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -95,6 +96,20 @@ func (a *Authorization) loadKeys() (err error) {
 	return
 }
 
+func (a *Authorization) saveKeys() error {
+	if data, err := json.Marshal(a.apiKeys); err != nil {
+		log.Printf("Failed to marshaling keys - %v", err)
+		return err
+	} else {
+		err = os.WriteFile(keyFile, data, 0600)
+		if err != nil {
+			log.Printf("Failed to write keys file - %v", err)
+			return err
+		}
+	}
+	return nil
+}
+
 func (a *Authorization) SetKey(user string) (key string, err error) {
 	if key == masterUser {
 		err = errors.New("you cannot redefine the master key")
@@ -107,18 +122,12 @@ func (a *Authorization) SetKey(user string) (key string, err error) {
 
 	newKey := generateKey(30)
 	a.apiKeys[newKey] = user
-	if data, err := json.Marshal(a.apiKeys); err != nil {
-		log.Printf("Failed to marshaling keys - %v", err)
+	if err = a.saveKeys(); err != nil {
+		delete(a.apiKeys, newKey)
 		return "", err
-	} else {
-		err = os.WriteFile(keyFile, data, 0600)
-		if err != nil {
-			log.Printf("Failed to write keys file - %v", err)
-			return "", err
-		}
-		return newKey, nil
 	}
 
+	return newKey, nil
 }
 
 func generateKey(size int) string {
@@ -136,7 +145,8 @@ func BasicAuth(next http.Handler) http.Handler {
 			renderError(w, r, http.StatusUnauthorized, "UNAUTHORIZED")
 			return
 		}
-		next.ServeHTTP(w, r)
+		newContext := context.WithValue(r.Context(), authOwnerKey, owner)
+		next.ServeHTTP(w, r.WithContext(newContext))
 	})
 }
 
@@ -169,5 +179,81 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		} else {
 			renderError(w, r, http.StatusInternalServerError, err.Error())
 		}
+	}
+}
+
+// List users godoc
+//
+//	@Summary	List all users allowed to publish
+//	@Tags		auth
+//	@Produce	json
+//	@Param		api-key	header		string	true	"API Key (master key)"
+//	@Success	201		{object}	[]domain.AuthResponse
+//	@Failure	401		{object}	server.ErrResponse
+//	@Failure	500		{object}	server.ErrResponse
+//	@Router		/auth/ [get]
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	if owner := r.Context().Value(authOwnerKey); owner != masterUser {
+		renderError(w, r, http.StatusForbidden, "Feature allowed only for master user")
+		return
+	}
+	if err := auth.loadKeys(); err != nil {
+		renderError(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+	keys := make([]domain.AuthResponse, len(auth.apiKeys))
+	index := 0
+	for key, user := range auth.apiKeys {
+		keys[index] = domain.AuthResponse{
+			UserName: user,
+			Key:      key,
+		}
+		index++
+	}
+	if content, err := json.Marshal(keys); err == nil {
+		w.WriteHeader(http.StatusOK)
+		w.Write(content)
+	} else {
+		renderError(w, r, http.StatusInternalServerError, err.Error())
+	}
+}
+
+// Delete user godoc
+//
+//	@Summary	Delete all keys of user
+//	@Tags		auth
+//	@Produce	json
+//	@Param		api-key	header		string	true	"API Key"
+//	@Param		user	path		string	true	"User name"
+//	@Success	201		{object}	server.ErrResponse
+//	@Failure	401		{object}	server.ErrResponse
+//	@Failure	500		{object}	server.ErrResponse
+//	@Router		/auth/{user} [delete]
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	if owner := r.Context().Value(authOwnerKey); owner != masterUser {
+		renderError(w, r, http.StatusForbidden, "Feature allowed only for master user")
+		return
+	}
+	if err := auth.loadKeys(); err != nil {
+		renderError(w, r, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if userArg := chi.URLParam(r, "user"); userArg == "" {
+		renderError(w, r, http.StatusBadRequest, "user is required")
+	} else {
+		removed := 0
+		for key, user := range auth.apiKeys {
+			if user == userArg {
+				delete(auth.apiKeys, key)
+				removed++
+			}
+		}
+		if removed > 0 {
+			if err := auth.saveKeys(); err != nil {
+				_ = auth.loadKeys()
+				removed = 0
+			}
+		}
+		renderError(w, r, http.StatusAccepted, fmt.Sprintf("%d keys removed from user %s", removed, userArg))
 	}
 }

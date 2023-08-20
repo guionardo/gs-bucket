@@ -117,6 +117,19 @@ func (r *LocalRepository) Delete(hash string) error {
 	}
 	return fmt.Errorf("file not found in repository: %s", hash)
 }
+
+func (r *LocalRepository) GetFileCount() int {
+	return len(r.fileMap)
+}
+
+func (r *LocalRepository) GetFileSize() int64 {
+	var size int64
+	for _, file := range r.fileMap {
+		size += int64(file.Size)
+	}
+	return size
+}
+
 func (r *LocalRepository) List() ([]*domain.File, error) {
 	list := make([]*domain.File, len(r.fileMap))
 	index := 0

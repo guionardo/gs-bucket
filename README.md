@@ -29,6 +29,53 @@ Email: <a href="mailto:guionardo@gmail.com">Guionardo Furlan</a> Web: <a href="h
 
 <h1 id="gs-bucket-api-auth">auth</h1>
 
+## get__auth_
+
+`GET /auth/`
+
+*List all users allowed to publish*
+
+<h3 id="get__auth_-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|api-key|header|string|true|API Key (master key)|
+
+> Example responses
+
+> 201 Response
+
+```json
+[
+  {
+    "key": "string",
+    "user": "string"
+  }
+]
+```
+
+<h3 id="get__auth_-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[server.ErrResponse](#schemaserver.errresponse)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
+
+<h3 id="get__auth_-responseschema">Response Schema</h3>
+
+Status Code **201**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[domain.AuthResponse](#schemadomain.authresponse)]|false|none|none|
+|» key|string|false|none|none|
+|» user|string|false|none|none|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
 ## post__auth_{user}
 
 `POST /auth/{user}`
@@ -60,6 +107,43 @@ Post a file to a pad, accessible for anyone
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|[domain.AuthResponse](#schemadomain.authresponse)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[server.ErrResponse](#schemaserver.errresponse)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## delete__auth_{user}
+
+`DELETE /auth/{user}`
+
+*Delete all keys of user*
+
+<h3 id="delete__auth_{user}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|api-key|header|string|true|API Key|
+|user|path|string|true|User name|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "code": 0,
+  "error": "string",
+  "status": "string"
+}
+```
+
+<h3 id="delete__auth_{user}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|[server.ErrResponse](#schemaserver.errresponse)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[server.ErrResponse](#schemaserver.errresponse)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
 
@@ -334,4 +418,4 @@ This operation does not require authentication
 |status|string|false|none|user-level status message|
 
 
-_swagger data generated @ Sun Aug 20 2023 14:50:02 GMT+0000 (Coordinated Universal Time)_
+_swagger data generated @ Sun Aug 20 2023 18:28:51 GMT+0000 (Coordinated Universal Time)_

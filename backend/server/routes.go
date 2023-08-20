@@ -28,6 +28,8 @@ func renderError(w http.ResponseWriter, r *http.Request, statusCode int, message
 
 func Service(_repository repo.Repository) http.Handler {
 	repository = _repository
+	_repository.Purge()
+	RecordMetrics(repository)
 
 	r := chi.NewRouter()
 	r.Use(
@@ -59,6 +61,8 @@ func Service(_repository repo.Repository) http.Handler {
 	r.Route("/auth", func(r chi.Router) {
 		r.Use(BasicAuth)
 		r.Post("/{user}", CreateUser)
+		r.Get("/", GetUsers)
+		r.Delete("/{user}", DeleteUser)
 	})
 	return r
 }
@@ -127,8 +131,16 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 			fmt.Sprintf("File saving error %v", err))
 		return
 	}
+	RecordMetrics(repository)
+
 	file.StatusCode = http.StatusCreated
 	render.Render(w, r, file)
+}
+
+func RecordMetrics(repo repo.Repository) {
+	BucketMetrics.RecordFileCount(repo.GetFileCount())
+	BucketMetrics.RecordFileSize(repo.GetFileSize())
+	BucketMetrics.RecordUserCount(len(auth.apiKeys))
 }
 
 // Download pad godoc

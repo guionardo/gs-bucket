@@ -12,6 +12,7 @@ type key int
 
 const (
 	fileKey key = iota
+	authOwnerKey
 )
 
 func PadCtx(next http.Handler) http.Handler {
