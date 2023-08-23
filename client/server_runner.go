@@ -14,15 +14,18 @@ import (
 	"github.com/guionardo/gs-bucket/backend/server"
 )
 
-var (
-	sig chan os.Signal
+var sig chan os.Signal
+
+const (
+	serverAddress = "http://localhost:8080"
+	masterKey     = "master.key"
 )
 
 func startServer(t *testing.T) error {
 	dataFolder := t.TempDir()
 	// Create master key
-	masterKeyFile := path.Join(dataFolder, "master.key")
-	os.WriteFile(masterKeyFile, []byte("master.key"), 0666)
+	masterKeyFile := path.Join(dataFolder, masterKey)
+	os.WriteFile(masterKeyFile, []byte(masterKey), 0666)
 
 	config := &server.Config{
 		RepositoryFolder: dataFolder,

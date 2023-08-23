@@ -39,8 +39,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -97,6 +97,12 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/domain.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Required user name",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrResponse"
                         }
                     },
                     "401": {
@@ -181,12 +187,6 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrResponse"
-                        }
-                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -230,13 +230,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Time to live",
+                        "description": "Time to live (i.Ex 300s, 1.5h or 2h45m). Valid time units are: 's', 'm', 'h')",
                         "name": "ttl",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
-                        "description": "If informed, the file will be deleted after first download. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as ",
+                        "description": "If informed, the file will be deleted after first download.",
                         "name": "delete-after-read",
                         "in": "query"
                     },

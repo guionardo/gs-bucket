@@ -43,7 +43,7 @@ Email: <a href="mailto:guionardo@gmail.com">Guionardo Furlan</a> Web: <a href="h
 
 > Example responses
 
-> 201 Response
+> 200 Response
 
 ```json
 [
@@ -58,13 +58,13 @@ Email: <a href="mailto:guionardo@gmail.com">Guionardo Furlan</a> Web: <a href="h
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[server.ErrResponse](#schemaserver.errresponse)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
 
 <h3 id="get__auth_-responseschema">Response Schema</h3>
 
-Status Code **201**
+Status Code **200**
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
@@ -107,6 +107,7 @@ Post a file to a pad, accessible for anyone
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created|[domain.AuthResponse](#schemadomain.authresponse)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Required user name|[server.ErrResponse](#schemaserver.errresponse)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[server.ErrResponse](#schemaserver.errresponse)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
 
@@ -185,7 +186,6 @@ This operation does not require authentication
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|Inline|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Not Found|[server.ErrResponse](#schemaserver.errresponse)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Internal Server Error|[server.ErrResponse](#schemaserver.errresponse)|
 
 <h3 id="get__pads-responseschema">Response Schema</h3>
@@ -231,8 +231,8 @@ Post a file to a pad, accessible for anyone
 |api-key|header|string|true|API Key|
 |name|query|string|true|File name|
 |slug|query|string|false|Slug or easy name (if not informed, will be used a hash value)|
-|ttl|query|string|false|Time to live|
-|delete-after-read|query|boolean|false|If informed, the file will be deleted after first download. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as |
+|ttl|query|string|false|Time to live (i.Ex 300s, 1.5h or 2h45m). Valid time units are: 's', 'm', 'h')|
+|delete-after-read|query|boolean|false|If informed, the file will be deleted after first download.|
 |body|body|string|true|Content|
 
 > Example responses
@@ -418,4 +418,4 @@ This operation does not require authentication
 |status|string|false|none|user-level status message|
 
 
-_swagger data generated @ Sun Aug 20 2023 18:28:51 GMT+0000 (Coordinated Universal Time)_
+_swagger data generated @ Tue Aug 22 2023 21:10:34 GMT+0000 (Coordinated Universal Time)_

@@ -1,11 +1,7 @@
 package server
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -13,7 +9,6 @@ import (
 	"github.com/go-chi/telemetry"
 	_ "github.com/guionardo/gs-bucket/backend/docs"
 	repo "github.com/guionardo/gs-bucket/backend/repository"
-	"github.com/guionardo/gs-bucket/domain"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
@@ -67,151 +62,8 @@ func Service(_repository repo.Repository) http.Handler {
 	return r
 }
 
-// Create pad godoc
-//
-//	@Summary		Create a pad
-//	@Description	Post a file to a pad, accessible for anyone
-//	@Tags			pads
-//	@Accept			json
-//	@Produce		json
-//	@Param			api-key				header		string	true	"API Key"
-//	@Param			name				query		string	true	"File name"
-//	@Param			slug				query		string	false	"Slug or easy name (if not informed, will be used a hash value)"
-//	@Param			ttl					query		string	false	"Time to live"
-//	@Param			delete-after-read	query		bool	false	"If informed, the file will be deleted after first download. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". "
-//	@Param			content				body		string	true	"Content"
-//	@Success		201					{object}	domain.File
-//	@Failure		400					{object}	server.ErrResponse
-//	@Failure		500					{object}	server.ErrResponse
-//	@Failure		507					{object}	server.ErrResponse
-//	@Router			/pads [post]
-func CreatePad(w http.ResponseWriter, r *http.Request) {
-	owner, err := auth.IsAuthorized(r)
-	if err != nil {
-		renderError(w, r, http.StatusUnauthorized, err.Error())
-		return
-	}
-
-	name := r.URL.Query().Get("name")
-	if len(name) == 0 {
-		renderError(w, r, http.StatusBadRequest, "Required name argument")
-		return
-	}
-	if contentLengthHeader := r.Header.Get("Content-Length"); len(contentLengthHeader) == 0 {
-		renderError(w, r, http.StatusBadRequest, "Required Content-Length header")
-		return
-	}
-
-	ttl, _ := time.ParseDuration(r.URL.Query().Get("ttl"))
-	deleteAfterRead := r.URL.Query().Has("delete-after-read")
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		renderError(w, r, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if len(body) == 0 {
-		renderError(w, r, http.StatusBadRequest, "Required body request")
-		return
-	}
-
-	file, err := domain.CreateFileFromData(name, body, ttl, owner)
-	if slug := r.URL.Query().Get("slug"); len(slug) > 0 {
-		_ = file.SetSlug(slug)
-	}
-
-	file.DeleteAfterRead = deleteAfterRead
-
-	if err != nil {
-		renderError(w, r, http.StatusInternalServerError,
-			fmt.Sprintf("File creation error %v", err))
-		return
-	}
-	if err = repository.SaveFile(file, body); err != nil {
-		renderError(w, r, http.StatusInsufficientStorage,
-			fmt.Sprintf("File saving error %v", err))
-		return
-	}
-	RecordMetrics(repository)
-
-	file.StatusCode = http.StatusCreated
-	render.Render(w, r, file)
-}
-
 func RecordMetrics(repo repo.Repository) {
 	BucketMetrics.RecordFileCount(repo.GetFileCount())
 	BucketMetrics.RecordFileSize(repo.GetFileSize())
 	BucketMetrics.RecordUserCount(len(auth.apiKeys))
-}
-
-// Download pad godoc
-//
-//	@Summary	Download a pad
-//	@Tags		pads
-//	@Accept		json
-//	@Produce	json
-//	@Param		code	path		string	true	"File code"
-//	@Success	200		{string}	string
-//	@Failure	404		{object}	server.ErrResponse
-//	@Failure	500		{object}	server.ErrResponse
-//	@Router		/pads/{code} [get]
-func GetPad(w http.ResponseWriter, r *http.Request) {
-	file := getFile(r)
-	data, _ := repository.Load(file.Slug)
-	file.SeenCount++
-	file.LastSeen = time.Now()
-	if err := repository.Save(); err != nil {
-		renderError(w, r, http.StatusInternalServerError, fmt.Sprintf("Failed to save pad %v", err))
-		return
-	}
-	if file.DeleteAfterRead {
-		file.ValidUntil = time.Now()
-	}
-	w.Header().Add("Content-Type", file.ContentType)
-	w.Header().Add("Date", file.CreationDate.Format(time.RFC1123Z))
-	w.Header().Add("Expires", file.ValidUntil.Format(time.RFC1123Z))
-	_, _ = w.Write(data)
-}
-
-// Delete pad godoc
-//
-//	@Summary	Delete a pad
-//	@Tags		pads
-//	@Accept		json
-//	@Produce	json
-//	@Param		code	path		string	true	"File code"
-//	@Success	200		{string}	string
-//	@Failure	404		{object}	server.ErrResponse
-//	@Failure	500		{object}	server.ErrResponse
-//	@Router		/pads/{code} [delete]
-func DeletePad(w http.ResponseWriter, r *http.Request) {
-	file := getFile(r)
-	if err := repository.Delete(file.Slug); err == nil {
-		w.WriteHeader(http.StatusAccepted)
-	} else {
-		renderError(w, r, http.StatusInternalServerError,
-			fmt.Sprintf("Failed to delete file %v", err))
-	}
-}
-
-// List pads godoc
-//
-//	@Summary	List pads
-//	@Tags		pads
-//	@Accept		json
-//	@Produce	json
-//	@Success	200	{object}	[]domain.File
-//	@Failure	404	{object}	server.ErrResponse
-//	@Failure	500	{object}	server.ErrResponse
-//	@Router		/pads [get]
-func ListPads(w http.ResponseWriter, r *http.Request) {
-	repository.Purge()
-	pads, err := repository.List()
-	if err != nil {
-		renderError(w, r, http.StatusInternalServerError,
-			fmt.Sprintf("Failed to enumerate pads %v", err))
-	} else {
-		w.Header().Add("Content-Type", "application/json")
-		body, _ := json.Marshal(pads)
-		_, _ = w.Write(body)
-	}
 }

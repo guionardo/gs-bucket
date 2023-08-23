@@ -14,19 +14,22 @@ import (
 	"github.com/go-chi/render"
 )
 
-type File struct {
-	Name            string    `json:"name"`
-	Slug            string    `json:"slug"`
-	Size            int       `json:"size"`
-	CreationDate    time.Time `json:"creation_date"`
-	ValidUntil      time.Time `json:"valid_until"`
-	ContentType     string    `json:"content_type"`
-	DeleteAfterRead bool      `json:"delete_after_read"`
-	LastSeen        time.Time `json:"last_seen"`
-	SeenCount       int       `json:"seen_count"`
-	StatusCode      int       `json:"-"`
-	Owner           string    `json:"owner"`
-}
+type (
+	File struct {
+		Name            string    `json:"name"`
+		Slug            string    `json:"slug"`
+		Size            int       `json:"size"`
+		CreationDate    time.Time `json:"creation_date"`
+		ValidUntil      time.Time `json:"valid_until"`
+		ContentType     string    `json:"content_type"`
+		DeleteAfterRead bool      `json:"delete_after_read"`
+		LastSeen        time.Time `json:"last_seen"`
+		SeenCount       int       `json:"seen_count"`
+		StatusCode      int       `json:"-"`
+		Owner           string    `json:"owner"`
+	}
+	FileList []*File
+)
 
 func (e *File) Render(w http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.StatusCode)
