@@ -48,7 +48,7 @@ info:
     url: https://github.com/guionardo/gs-bucket
   description: This application will run a HTTP server to store files
   title: GS-Bucket API
-  version: 0.0.5
+  version: 0.0.6
 paths:
   /auth/:
     get:

@@ -14,12 +14,12 @@ var (
 	Build = "development"
 )
 
-// @title			GS-Bucket API
-// @version		0.0.5
-// @description	This application will run a HTTP server to store files
-// @contact.name	Guionardo Furlan
-// @contact.url	https://github.com/guionardo/gs-bucket
-// @contact.email	guionardo@gmail.com
+//	@title			GS-Bucket API
+//	@version		0.0.6
+//	@description	This application will run a HTTP server to store files
+//	@contact.name	Guionardo Furlan
+//	@contact.url	https://github.com/guionardo/gs-bucket
+//	@contact.email	guionardo@gmail.com
 func main() {
 	if buildTime, err := time.Parse("2006-01-02T15:04:05-0700", Build); err == nil {
 		server.BuildTime = buildTime
