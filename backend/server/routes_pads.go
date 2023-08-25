@@ -108,6 +108,7 @@ func GetPad(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", file.ContentType)
 	w.Header().Add("Date", file.CreationDate.Format(time.RFC1123Z))
 	w.Header().Add("Expires", file.ValidUntil.Format(time.RFC1123Z))
+	w.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", file.Name))
 	_, _ = w.Write(data)
 }
 
