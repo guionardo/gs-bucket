@@ -24,6 +24,7 @@ import (
 //	@Param			slug				query		string	false	"Slug or easy name (if not informed, will be used a hash value)"
 //	@Param			ttl					query		string	false	"Time to live (i.Ex 300s, 1.5h or 2h45m). Valid time units are: 's', 'm', 'h')"
 //	@Param			delete-after-read	query		bool	false	"If informed, the file will be deleted after first download."
+//	@Param			private				query		bool	false	"Should use API-KEY header to download file"
 //	@Param			content				body		string	true	"Content"
 //	@Success		201					{object}	domain.File
 //	@Failure		400					{object}	server.ErrResponse
@@ -49,6 +50,7 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 
 	ttl, _ := time.ParseDuration(r.URL.Query().Get("ttl"))
 	deleteAfterRead := r.URL.Query().Has("delete-after-read")
+
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		renderError(w, r, http.StatusInternalServerError, err.Error())
@@ -60,6 +62,9 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, err := domain.CreateFileFromData(name, body, ttl, owner)
+	if r.URL.Query().Has("private") {
+		file.SetPrivate(true)
+	}
 	if slug := r.URL.Query().Get("slug"); len(slug) > 0 {
 		_ = file.SetSlug(slug)
 	}
@@ -88,6 +93,7 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 //	@Tags		pads
 //	@Accept		json
 //	@Produce	json
+//	@Param		api-key	header		string	false	"API Key used for private pads"
 //	@Param		code	path		string	true	"File code"
 //	@Success	200		{string}	string
 //	@Failure	404		{object}	server.ErrResponse
@@ -95,6 +101,12 @@ func CreatePad(w http.ResponseWriter, r *http.Request) {
 //	@Router		/pads/{code} [get]
 func GetPad(w http.ResponseWriter, r *http.Request) {
 	file := getFile(r)
+	if file.Private {
+		if _, err := auth.IsAuthorized(r); err != nil {
+			renderError(w, r, http.StatusUnauthorized, err.Error())
+			return
+		}
+	}
 	data, _ := repository.Load(file.Slug)
 	file.SeenCount++
 	file.LastSeen = time.Now()
@@ -139,8 +151,9 @@ func DeletePad(w http.ResponseWriter, r *http.Request) {
 //	@Tags		pads
 //	@Accept		json
 //	@Produce	json
-//	@Success	200	{object}	[]domain.File
-//	@Failure	500	{object}	server.ErrResponse
+//	@Param		api-key	header		string	false	"API Key used for private pads"
+//	@Success	200		{object}	[]domain.File
+//	@Failure	500		{object}	server.ErrResponse
 //	@Router		/pads [get]
 func ListPads(w http.ResponseWriter, r *http.Request) {
 	repository.Purge()
@@ -148,10 +161,19 @@ func ListPads(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		renderError(w, r, http.StatusInternalServerError,
 			fmt.Sprintf("Failed to enumerate pads %v", err))
-	} else {
-		body, _ := json.Marshal(pads)
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("Content-Length", strconv.Itoa(len(body)))
-		_, _ = w.Write(body)
+		return
 	}
+	filtered := make([]*domain.File, 0, len(pads))
+	owner, _ := auth.IsAuthorized(r)
+	// Get only the public and private pads
+	for _, pad := range pads {
+		if !pad.Private || pad.Owner == owner {
+			filtered = append(filtered, pad)
+		}
+	}
+
+	body, _ := json.Marshal(filtered)
+	w.Header().Add("Content-Type", "application/json")
+	w.Header().Add("Content-Length", strconv.Itoa(len(body)))
+	_, _ = w.Write(body)
 }

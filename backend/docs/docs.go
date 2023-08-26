@@ -177,6 +177,14 @@ const docTemplate = `{
                     "pads"
                 ],
                 "summary": "List pads",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key used for private pads",
+                        "name": "api-key",
+                        "in": "header"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -241,6 +249,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "description": "Should use API-KEY header to download file",
+                        "name": "private",
+                        "in": "query"
+                    },
+                    {
                         "description": "Content",
                         "name": "content",
                         "in": "body",
@@ -291,6 +305,12 @@ const docTemplate = `{
                 ],
                 "summary": "Download a pad",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key used for private pads",
+                        "name": "api-key",
+                        "in": "header"
+                    },
                     {
                         "type": "string",
                         "description": "File code",
@@ -395,6 +415,9 @@ const docTemplate = `{
                 },
                 "owner": {
                     "type": "string"
+                },
+                "private": {
+                    "type": "boolean"
                 },
                 "seen_count": {
                     "type": "integer"

@@ -20,6 +20,8 @@ definitions:
         type: string
       owner:
         type: string
+      private:
+        type: boolean
       seen_count:
         type: integer
       size:
@@ -150,6 +152,11 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: API Key used for private pads
+        in: header
+        name: api-key
+        type: string
       produces:
       - application/json
       responses:
@@ -193,6 +200,10 @@ paths:
       - description: If informed, the file will be deleted after first download.
         in: query
         name: delete-after-read
+        type: boolean
+      - description: Should use API-KEY header to download file
+        in: query
+        name: private
         type: boolean
       - description: Content
         in: body
@@ -254,6 +265,10 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: API Key used for private pads
+        in: header
+        name: api-key
+        type: string
       - description: File code
         in: path
         name: code

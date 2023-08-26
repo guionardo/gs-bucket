@@ -44,6 +44,7 @@ func Service(_repository repo.Repository) http.Handler {
 		httpSwagger.URL("/swagger/doc.json"), // The url pointing to API definition
 	))
 
+	//TODO: Implementar rotas /pads/USUARIO para evitar colisão de hashes/slugs
 	r.Route("/pads", func(r chi.Router) {
 		r.Get("/", ListPads)
 		r.Post("/", CreatePad)

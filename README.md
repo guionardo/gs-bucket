@@ -160,6 +160,12 @@ This operation does not require authentication
 
 *List pads*
 
+<h3 id="get__pads-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|api-key|header|string|false|API Key used for private pads|
+
 > Example responses
 
 > 200 Response
@@ -173,6 +179,7 @@ This operation does not require authentication
     "last_seen": "string",
     "name": "string",
     "owner": "string",
+    "private": true,
     "seen_count": 0,
     "size": 0,
     "slug": "string",
@@ -201,6 +208,7 @@ Status Code **200**
 |» last_seen|string|false|none|none|
 |» name|string|false|none|none|
 |» owner|string|false|none|none|
+|» private|boolean|false|none|none|
 |» seen_count|integer|false|none|none|
 |» size|integer|false|none|none|
 |» slug|string|false|none|none|
@@ -233,6 +241,7 @@ Post a file to a pad, accessible for anyone
 |slug|query|string|false|Slug or easy name (if not informed, will be used a hash value)|
 |ttl|query|string|false|Time to live (i.Ex 300s, 1.5h or 2h45m). Valid time units are: 's', 'm', 'h')|
 |delete-after-read|query|boolean|false|If informed, the file will be deleted after first download.|
+|private|query|boolean|false|Should use API-KEY header to download file|
 |body|body|string|true|Content|
 
 > Example responses
@@ -247,6 +256,7 @@ Post a file to a pad, accessible for anyone
   "last_seen": "string",
   "name": "string",
   "owner": "string",
+  "private": true,
   "seen_count": 0,
   "size": 0,
   "slug": "string",
@@ -277,6 +287,7 @@ This operation does not require authentication
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
+|api-key|header|string|false|API Key used for private pads|
 |code|path|string|true|File code|
 
 > Example responses
@@ -370,6 +381,7 @@ This operation does not require authentication
   "last_seen": "string",
   "name": "string",
   "owner": "string",
+  "private": true,
   "seen_count": 0,
   "size": 0,
   "slug": "string",
@@ -388,6 +400,7 @@ This operation does not require authentication
 |last_seen|string|false|none|none|
 |name|string|false|none|none|
 |owner|string|false|none|none|
+|private|boolean|false|none|none|
 |seen_count|integer|false|none|none|
 |size|integer|false|none|none|
 |slug|string|false|none|none|
@@ -418,4 +431,4 @@ This operation does not require authentication
 |status|string|false|none|user-level status message|
 
 
-_swagger data generated @ Fri Aug 25 2023 17:08:18 GMT+0000 (Coordinated Universal Time)_
+_swagger data generated @ Sat Aug 26 2023 16:01:39 GMT+0000 (Coordinated Universal Time)_

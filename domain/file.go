@@ -27,6 +27,7 @@ type (
 		SeenCount       int       `json:"seen_count"`
 		StatusCode      int       `json:"-"`
 		Owner           string    `json:"owner"`
+		Private         bool      `json:"private"`
 	}
 	FileList []*File
 )
@@ -75,4 +76,9 @@ func (file *File) Expired() bool {
 func (file *File) SetSlug(slug string) error {
 	file.Slug = url.PathEscape(strings.ReplaceAll(slug, " ", "_"))
 	return nil
+}
+
+func (file *File) SetPrivate(isPrivate bool) *File {
+	file.Private = isPrivate
+	return file
 }
